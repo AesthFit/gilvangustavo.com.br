@@ -7,7 +7,7 @@
 - [x] Instalar e validar tipos, lint, build e dry-run.
 - [x] Verificar rotas e recursos no runtime Workers local.
 - [x] Publicar e verificar HTTPS e apresentação visual nos domínios existentes.
-- [ ] Integrar commits assinados à branch principal do destino.
+- [x] Integrar commits assinados à branch principal do destino.
 
 ## Validação
 

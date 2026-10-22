@@ -48,6 +48,24 @@ bun run deploy
 alterar registros de e-mail. A publicação é via CLI; integração Git automática
 com Workers Builds exige acesso da instalação Cloudflare à organização AesthFit.
 
+## Build no GitHub Actions
+
+O workflow `Validate Worker` instala pelo lockfile original, compila, verifica
+TypeScript e lint de código, executa Wrangler dry-run e testa as rotas no runtime
+Workers. O artefato `worker-build` contém o servidor e os assets aprovados.
+
+Para publicar um artefato sem recompilar localmente, defina `BUILD_RUN_ID` com o
+identificador de uma execução aprovada e baixe para um diretório vazio:
+
+```sh
+gh run download "$BUILD_RUN_ID" --repo AesthFit/gilvangustavo.com.br --name worker-build --dir .output
+bunx wrangler@4.151.3 deploy --config .output/server/wrangler.json
+```
+
+O workflow não recebe credenciais Cloudflare. A publicação usa a autenticação
+local do Wrangler. O desenho canônico do favicon está em `public/icon.svg`, com
+ICO multirresolução e PNGs de compatibilidade derivados dele.
+
 ## Rotas públicas
 
 - `/`: landing page e contato por WhatsApp.
