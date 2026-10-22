@@ -14,4 +14,3 @@ User-agent: *
 Allow: /
 
 Sitemap: https://gilvangustavo.com.br/sitemap.xml
-
