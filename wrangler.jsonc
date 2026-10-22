@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "gilvangustavo",
+  "account_id": "de66398e0fd4bf1873f26815de955ddc",
+  "compatibility_date": "2026-10-21",
+  "routes": [
+    { "pattern": "gilvangustavo.com.br", "custom_domain": true },
+    { "pattern": "www.gilvangustavo.com.br", "custom_domain": true }
+  ],
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page"
+  }
+}
