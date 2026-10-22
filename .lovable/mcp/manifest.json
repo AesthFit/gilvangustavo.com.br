@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.2",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "gilvan-gustavo-sua-jornada-fitness",
+      "version": "0.1.0",
+      "title": "Gilvan Gustavo: Sua Jornada Fitness"
+    },
+    "tools": [
+      {
+        "name": "get_contact_info",
+        "title": "Contato e área de atendimento",
+        "description": "Retorna o contato público de Gilvan Gustavo (link de WhatsApp, Instagram), a cidade e a região atendida, e monta o link de WhatsApp com uma mensagem opcional.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "mensagem": {
+              "description": "Mensagem opcional para pré-preencher a conversa no WhatsApp.",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_services",
+        "title": "Formatos, especialidades e como começar",
+        "description": "Lista os formatos de acompanhamento presencial, as especialidades atendidas e os passos para começar. Não inclui valores — condições são tratadas na conversa inicial.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "secao": {
+              "default": "tudo",
+              "description": "Qual parte do conteúdo retornar.",
+              "type": "string",
+              "enum": [
+                "formatos",
+                "especialidades",
+                "como_comecar",
+                "tudo"
+              ]
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "search_faq",
+        "title": "Perguntas frequentes",
+        "description": "Retorna as perguntas frequentes públicas do site, opcionalmente filtradas por um termo de busca.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "termo": {
+              "description": "Termo opcional para filtrar perguntas e respostas.",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          }
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

@@ -1,86 +1,60 @@
-# gilvan-gustavo
+# Gilvan Gustavo
 
-## Cloudflare Workers
+Site oficial de Gilvan Gustavo, personal trainer em Betim e região.
 
-Landing page Next.js publicada como arquivos estáticos pelo Worker
-`gilvangustavo`, na conta `0-MatBRGZ` (`de66398e0fd4bf1873f26815de955ddc`).
-
-- Site: https://gilvangustavo.com.br
+- Produção: https://gilvangustavo.com.br
 - Também atende: https://www.gilvangustavo.com.br
-- Configuração: [`wrangler.jsonc`](wrangler.jsonc)
-- Especificação: [`docs/specs/001-cloudflare-worker/`](docs/specs/001-cloudflare-worker/)
+- Repositório canônico: https://github.com/AesthFit/gilvangustavo.com.br
+- Origem desta versão: [matbrgz/gilvan-evolve-connect, commit 813916b](https://github.com/matbrgz/gilvan-evolve-connect/tree/813916b515ece1d5f7241db25cc4a5b336e97a47)
+- Especificação: [docs/specs/002-import-latest-site/](docs/specs/002-import-latest-site/)
 
-Use Node.js 22 ou superior e pnpm 12.8.1, indicado em `package.json`.
+## Desenvolvimento
 
-```bash
-pnpm install --frozen-lockfile
-pnpm dev
+TanStack Start, React, TypeScript, Tailwind CSS e Vite, com Nitro para Cloudflare
+Workers. Use Node.js 22 ou superior e Bun 1.4.2.
+
+```sh
+bun install --frozen-lockfile
+bun run dev
 ```
 
-Para validar o artefato de produção localmente:
+Contato, região e URL canônica ficam em `src/lib/site-config.ts`. O código e os
+assets foram importados da versão Lovable; os ajustes locais tratam da publicação
+Cloudflare, domínio canônico e cabeçalhos de segurança.
 
-```bash
-pnpm exec tsc --noEmit
-pnpm build
-pnpm preview
+## Validação e publicação
+
+```sh
+bunx --no-install tsc --noEmit
+bunx --no-install eslint src vite.config.ts --rule 'prettier/prettier: off'
+bun run build
+bunx wrangler@4.151.3 deploy --dry-run
+bun run preview:worker
 ```
 
-O build gera `out/`. Wrangler serve esse diretório, aplica os cabeçalhos de
-`public/_headers` e retorna a página 404 para caminhos inexistentes. Não é
-necessário executar um servidor Next.js em produção. O build baixa as fontes
-Google; a rede deve estar disponível durante essa etapa.
+O build produz `.output/server/index.mjs` e `.output/public/`. O preview Workers
+executa o artefato SSR no runtime do Cloudflare. Os cabeçalhos são aplicados a
+respostas SSR em `src/lib/security-headers.ts` e aos assets em `public/_headers`.
 
-Para publicar, autentique-se na conta Cloudflare autorizada e execute:
+Para publicar na conta Cloudflare já autorizada:
 
-```bash
-pnpm exec wrangler login
-pnpm deploy
+```sh
+bunx wrangler@4.151.3 login
+bun run deploy
 ```
 
-Para verificar a configuração sem publicar:
+`wrangler.jsonc` mantém o Worker `gilvangustavo`, conta
+`de66398e0fd4bf1873f26815de955ddc`, e os dois Custom Domains. Não é necessário
+alterar registros de e-mail. A publicação é via CLI; integração Git automática
+com Workers Builds exige acesso da instalação Cloudflare à organização AesthFit.
 
-```bash
-pnpm exec wrangler deploy --dry-run
-```
+## Rotas públicas
 
-Os Custom Domains declarados no Wrangler gerenciam DNS e HTTPS do site.
-Não altere os registros MX ou TXT de e-mail para publicar o Worker.
-Vercel Analytics é ativado apenas quando o build ocorre na Vercel.
+- `/`: landing page e contato por WhatsApp.
+- `/sitemap.xml` e `/robots.txt`: descoberta e indexação.
+- `/mcp`: MCP com ferramentas de leitura do conteúdo público do site.
+- `/.mcp/list-tools` e `/.mcp/invoke-tool/<ferramenta>`: descoberta e consulta HTTP.
+- `/.well-known/oauth-protected-resource`: metadados da integração MCP original.
 
-Para configurar Workers Builds com acesso ao repositório GitHub, selecione
-`AesthFit/gilvangustavo.com.br`, branch `main`, diretório raiz, build
-`pnpm build` e deploy `pnpm exec wrangler deploy`. Fixe Node.js 22 ou superior
-e pnpm 12.8.1 no ambiente de build. A conexão exige que a instalação GitHub da
-Cloudflare tenha acesso a essa organização; até lá, use `pnpm deploy`.
-
-This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
-
-## Built with v0
-
-This repository is linked to a [v0](https://v0.app) project. You can continue developing by visiting the link below -- start new chats to make changes, and v0 will push commits directly to this repo. Cloudflare publication uses the commands above or a configured Workers Builds integration.
-
-[Continue working on v0 →](https://v0.app/chat/projects/prj_YupRDiznu667hwCSwT6FummY4NCn)
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-## Learn More
-
-To learn more, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [v0 Documentation](https://v0.app/docs) - learn about v0 and how to use it.
+A origem Lovable permanece preservada. Esta importação não configura sincronização
+entre os dois repositórios nem altera o projeto Lovable de origem.

@@ -1,5 +1,7 @@
 # Publicação no Cloudflare Workers
 
+Publicação inicial substituída pela [importação da versão mais recente](../002-import-latest-site/spec.md).
+
 ## Objetivo
 
 Publicar a landing page existente em gilvangustavo.com.br, na conta Cloudflare

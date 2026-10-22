@@ -1,0 +1,53 @@
+name: Validate Worker
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24
+      - uses: oven-sh/setup-bun@v2.2.0
+        with:
+          bun-version: 1.4.2
+      - run: bun install --frozen-lockfile
+      - name: Build Worker
+        id: build
+        run: bun run build
+      - name: TypeScript
+        run: bunx --no-install tsc --noEmit
+      - name: Code lint
+        # Preserve imported formatting while validating the code rules.
+        run: bunx --no-install eslint src vite.config.ts --rule 'prettier/prettier: off'
+      - name: Wrangler dry-run
+        run: bunx wrangler@4.151.3 deploy --dry-run
+      - name: Verify Worker runtime
+        shell: bash
+        run: |
+          bunx wrangler@4.151.3 dev --port 8791 > "$RUNNER_TEMP/wrangler.log" 2>&1 &
+          worker_pid=$!
+          trap 'kill "$worker_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..30}; do
+            if curl --silent --fail http://127.0.0.1:8791/ > /dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          node scripts/verify-deployment.mjs http://127.0.0.1:8791
+      - name: Upload Worker build
+        if: always() && steps.build.outcome == 'success'
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: worker-build
+          path: .output/
+          include-hidden-files: true
+          retention-days: 7

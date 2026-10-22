@@ -1,8 +1,0 @@
-overrides:
-  hono: 4.12.25
-
-allowBuilds:
-  esbuild: true
-  msw: false
-  sharp: true
-  workerd: true
