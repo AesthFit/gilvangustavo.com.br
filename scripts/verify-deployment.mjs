@@ -29,6 +29,19 @@ assert(html.includes('wa.me/5531992931470'), 'Latest WhatsApp contact');
 const canonical = html.match(/<link\b[^>]*>/g)?.find(tag => tag.includes('rel="canonical"'));
 assert(canonical?.includes('href="https://gilvangustavo.com.br/"'), 'Canonical URL');
 assert(!html.includes('gilvan-evolve-connect.lovable.app'), 'No old public canonical origin');
+assert(html.includes('/icon.svg?v=gg-20261022'), 'Versioned brand SVG favicon');
+assert(html.includes('/favicon.ico?v=gg-20261022'), 'Versioned ICO favicon');
+assert(html.includes('/apple-icon.png?v=gg-20261022'), 'Versioned Apple Touch Icon');
+const faviconSvg = await (await check('/icon.svg?v=gg-20261022')).text();
+assert(faviconSvg.includes('id="gilvan-gustavo-favicon"'), 'Brand favicon SVG');
+const ico = Buffer.from(await (await check('/favicon.ico?v=gg-20261022')).arrayBuffer());
+assert.equal(ico.readUInt16LE(2), 1, 'ICO format');
+assert.equal(ico.readUInt16LE(4), 6, 'Six ICO resolutions');
+for (const [path, size] of [['/apple-icon.png?v=gg-20261022', 180], ['/icon-dark-32x32.png', 32], ['/icon-light-32x32.png', 32]]) {
+  const png = Buffer.from(await (await check(path)).arrayBuffer());
+  assert.equal(png.readUInt32BE(16), size, `${path}: PNG width`);
+  assert.equal(png.readUInt32BE(20), size, `${path}: PNG height`);
+}
 
 for (const path of ['/fotos/gilvan-hero.webp', '/fotos/gilvan-orientando.webp', '/fotos/gilvan-planejamento.webp', '/logo-wordmark.webp', '/logo-monogram.webp']) {
   const image = await check(path);
